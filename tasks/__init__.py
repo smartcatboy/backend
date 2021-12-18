@@ -13,7 +13,7 @@ if config.ENABLE_SENTRY:
     sentry_sdk.init(
         release=f"{config.BACKEND_VERSION}",
         environment=f"{config.ENVIRONMENT}",
-        dsn="https://74ad2dcda2794afa9a207be8e9c17ea5@sentry.leishi.io/4",
+        dsn="https://f320001640444ef1ab2bc739065c4ad6@sentry.660161.xyz/6112405",
         traces_sample_rate=1.0,
         integrations=[CeleryIntegration()],
     )
