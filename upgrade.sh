@@ -5,16 +5,14 @@
 #AUTO_UPGRADE="yes"
 
 UPDATE_URL=https://raw.githubusercontent.com/smartcatboy/deploy/main/VERSION
-VERSION_INFO=`wget -qO - $UPDATE_URL | grep -w ^$BACKEND_VERSION`
-if [ -z $VERSION_INFO ]; then
-    echo "No need to upgrade."
-    exit 0
-fi
-
+VERSION_INFO=`wget -qO - $UPDATE_URL | grep -v ^\# | grep -w ^$BACKEND_VERSION`
 LATEST_VERSION=`echo $VERSION_INFO | awk '{print $2}'`
 LATEST_ID=`echo $VERSION_INFO | awk '{print $3}'`
 FORCE=`echo $VERSION_INFO | awk '{print $4}'`
-
+if [[ -z $LATEST_VERSION ]]; then
+    echo "No need to upgrade."
+    exit 0
+fi
 if [[ $FORCE == "N" && $AUTO_UPGRADE != "yes" ]]; then
     echo "No need to upgrade."
     exit 0
