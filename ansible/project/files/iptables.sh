@@ -10,11 +10,11 @@ REMOTE_PORT=0
 
 check_system () {
     source '/etc/os-release'
-    if [ $ID == "centos" ]; then
+    if [ $ID = "centos" ]; then
         OS_FAMILY="centos"
         UPDATE="$SUDO yum makecache -y"
         INSTALL="$SUDO yum install -y iptables"
-    elif  [ $ID == "debian" ] || [ $ID == "ubuntu" ]; then
+    elif  [ $ID = "debian" ] || [ $ID = "ubuntu" ]; then
         OS_FAMILY="debian"
         UPDATE="$SUDO apt update -y"
         INSTALL="$SUDO apt install -y iptables"
@@ -34,12 +34,12 @@ install_ipt () {
 
 disable_firewall () {
     if [ $OS_FAMILY = "centos" ]; then
-        if [ -n $(systemctl list-unit-files --all | grep "firewalld.service" | grep "enabled") ]; then
+        if [[ -n $(systemctl list-unit-files --all | grep "firewalld.service" | grep "enabled") ]]; then
             $SUDO systemctl stop firewalld.service && \
             $SUDO systemctl disable firewalld.service
 	fi
     else
-        if [ -n $(systemctl list-unit-files --all | grep "ufw.service" | grep "enabled") ]; then
+        if [[ -n $(systemctl list-unit-files --all | grep "ufw.service" | grep "enabled") ]]; then
             $SUDO systemctl stop ufw.service && \
             $SUDO systemctl disable ufw.service
 	fi
@@ -100,7 +100,7 @@ EOF
 
 check_ipt_service () {
     IPT_SERVICE="iptables-restore.service"
-    if [ -z $(systemctl list-unit-files --all | grep "$IPT_SERVICE" | grep "enabled") ]; then
+    if [[ -z $(systemctl list-unit-files --all | grep "$IPT_SERVICE" | grep "enabled") ]]; then
         install_ipt_service
     fi
     $SUDO systemctl daemon-reload && \

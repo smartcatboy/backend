@@ -28,12 +28,12 @@
         ([ -d /etc/systemd/system ] || mkdir -p /etc/systemd/system)
     - name: Stop firewalld
       raw: |
-        [ -n $(systemctl list-unit-files --all | grep "firewalld.service" | grep "enabled") ] && \
+        [[ -n $(systemctl list-unit-files --all | grep "firewalld.service" | grep "enabled") ]] && \
         systemctl stop firewalld.service && \
         systemctl disable firewalld.service
     - name: Stop ufw
       raw: |
-        [ -n $(systemctl list-unit-files --all | grep "ufw.service" | grep "enabled") ] && \
+        [[ -n $(systemctl list-unit-files --all | grep "ufw.service" | grep "enabled") ]] && \
         systemctl stop ufw.service && \
         systemctl disable ufw.service
     - name: Get facts
