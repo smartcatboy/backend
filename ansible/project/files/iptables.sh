@@ -34,11 +34,15 @@ install_ipt () {
 
 disable_firewall () {
     if [ $OS_FAMILY = "centos" ]; then
-        $SUDO systemctl stop firewalld.service && \
-        $SUDO systemctl disable firewalld.service
+        if [ -n $(systemctl list-unit-files --all | grep "firewalld.service" | grep "enabled") ]; then
+            $SUDO systemctl stop firewalld.service && \
+            $SUDO systemctl disable firewalld.service
+	fi
     else
-        $SUDO systemctl stop ufw.service && \
-        $SUDO systemctl disable ufw.service
+        if [ -n $(systemctl list-unit-files --all | grep "ufw.service" | grep "enabled") ]; then
+            $SUDO systemctl stop ufw.service && \
+            $SUDO systemctl disable ufw.service
+	fi
     fi
 }
 
