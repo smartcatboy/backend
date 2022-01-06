@@ -26,21 +26,23 @@
       raw: |
         ([ -d /usr/lib/systemd/system ] || mkdir -p /usr/lib/systemd/system) && \
         ([ -d /etc/systemd/system ] || mkdir -p /etc/systemd/system)
-    - name: Stop firewalld
-      raw: |
-        [[ -n $(systemctl list-unit-files --all | grep "firewalld.service" | grep "enabled") ]] && \
-        systemctl stop firewalld.service && \
-        systemctl disable firewalld.service
-    - name: Stop ufw
-      raw: |
-        [[ -n $(systemctl list-unit-files --all | grep "ufw.service" | grep "enabled") ]] && \
-        systemctl stop ufw.service && \
-        systemctl disable ufw.service
     - name: Get facts
       setup:
     - name: Get service facts
       service_facts:
       register: services
+    - name: Stop firewalld
+      when: ansible_facts.services is defined and ansible_facts.services["firewalld.service"] is defined
+      systemd:
+        name: firewalld
+        enabled: 'no'
+        state: 'stopped'
+    - name: Stop ufw
+      when: ansible_facts.services is defined and ansible_facts.services["ufw.service"] is defined
+      systemd:
+        name: ufw
+        enabled: 'no'
+        state: 'stopped'
   roles:
     - role: services_prepare
       when: prepare_services is defined and prepare_services
