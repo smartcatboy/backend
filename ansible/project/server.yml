@@ -31,11 +31,21 @@
     - name: Get service facts
       service_facts:
       register: services
+    - name: Stop firewalld
+      when: ansible_facts.services is defined and ansible_facts.services["firewalld.service"] is defined
+      systemd:
+        name: firewalld
+        enabled: 'no'
+        state: 'stopped'
+    - name: Stop ufw
+      when: ansible_facts.services is defined and ansible_facts.services["ufw.service"] is defined
+      systemd:
+        name: ufw
+        enabled: 'no'
+        state: 'stopped'
   roles:
     - role: services_prepare
       when: prepare_services is defined and prepare_services
     - role: scripts_sync
       when: sync_scripts is defined and sync_scripts
-    - role: iptables_init
-      when: init_iptables is defined and init_iptables
     - iptables_get
