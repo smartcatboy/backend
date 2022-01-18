@@ -115,7 +115,7 @@ def rule_runner(rule_id: int):
                 break
         if rule.config.get("expire_second"):
             clean_port_runner.schedule(
-                (server_id, port_num),
+                (server_id, port_id, port_num),
                 eta=datetime.now()
                 + timedelta(seconds=rule.config.get("expire_second")),
             )

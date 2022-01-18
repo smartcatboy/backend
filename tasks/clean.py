@@ -2,6 +2,7 @@ import typing as t
 
 from app.db.session import db_session
 from app.db.crud.server import get_server_with_ports_usage
+from app.db.crud.port_forward import delete_forward_rule_db
 from .config import huey
 from tasks.ansible import ansible_hosts_runner
 from tasks.utils.runner import run
@@ -23,9 +24,10 @@ def clean_runner(server: t.Dict):
 
 @huey.task()
 def clean_port_runner(
-    server_id: int, port_num: int, update_traffic: bool = True
+    server_id: int, port_id: int, port_num: int, update_traffic: bool = True
 ):
     with db_session() as db:
+        delete_forward_rule_db(db, server_id, port_id)
         server = get_server_with_ports_usage(db, server_id)
     run(
         server=server,
