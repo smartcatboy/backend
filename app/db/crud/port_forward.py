@@ -15,7 +15,6 @@ from app.db.schemas.port_forward import (
 from app.db.models.port import Port, PortUser
 from app.db.models.port_forward import PortForwardRule, TypeEnum, MethodEnum
 
-from .result import DBResultEnum
 
 def get_forward_rule(
     db: Session, server_id: int, port_id: int, user: User = None
@@ -98,12 +97,15 @@ def edit_forward_rule(
     db.refresh(db_forward_rule)
     return db_forward_rule
 
-def delete_forward_rule_db(
+
+def delete_forward_rule(
     db: Session, server_id: int, port_id: int, user: User = None
-    ) -> t.Tuple[int, ...]:
+) -> t.Tuple[PortForwardRule, Port]:
     db_forward_rule = get_forward_rule(db, server_id, port_id)
     if not db_forward_rule:
-        return (DBResultEnum.RULE_NOT_FOUND,)
+        raise HTTPException(
+            status_code=404, detail="Port forward rule not found"
+        )
     if (
         user is not None
         and not user.is_admin()
@@ -111,26 +113,13 @@ def delete_forward_rule_db(
             user.id == u.user_id for u in db_forward_rule.port.allowed_users
         )
     ):
-        return (DBResultEnum.USER_NOT_ALLOWED,)
-    db.delete(db_forward_rule)
-    db.commit()
-    return DBResultEnum.SUCCESS, db_forward_rule, port
-
-def delete_forward_rule(
-    db: Session, server_id: int, port_id: int, user: User = None
-) -> t.Tuple[PortForwardRule, Port]:
-    ret = delete_forward_rule_db(db, server_id, port_id, user)
-    status = ret[0]
-    if status == DBResultEnum.RULE_NOT_FOUND:
-        raise HTTPException(
-            status_code=404, detail="Port forward rule not found"
-        )
-    if status == DBResultEnum.USER_NOT_ALLOWED:
         raise HTTPException(
             status_code=403,
             detail="User not allowed to delete this port forward rule",
         )
-    db_forward_rule, port = ret[1:]
+    port = db_forward_rule.port
+    db.delete(db_forward_rule)
+    db.commit()
     return db_forward_rule, port
 
 
