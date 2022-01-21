@@ -114,8 +114,8 @@ def rule_runner(rule_id: int):
             if runner.status != "successful":
                 break
         if rule.config.get("expire_second"):
-            clean_port_runner.apply_async(
-                (server_id, port_num),
+            clean_port_runner.schedule(
+                (server_id, port_id, port_num),
                 eta=datetime.now()
                 + timedelta(seconds=rule.config.get("expire_second")),
             )
