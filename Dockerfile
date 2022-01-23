@@ -7,11 +7,12 @@ RUN mkdir /app
 WORKDIR /app
 COPY . ./
 
-RUN apk add --no-cache openssh-client sshpass bash
+RUN apk add --no-cache openssh-client sshpass bash libc-dev libffi-dev
 
 RUN sed -i '/#   StrictHostKeyChecking /c StrictHostKeyChecking no' /etc/ssh/ssh_config && \
     sed -i 's/^#\s\+UserKnownHostsFile.*/UserKnownHostsFile \/dev\/null/' /etc/ssh/ssh_config
 
-RUN apk add --no-cache --virtual .build-deps gcc libc-dev libffi-dev && \
+RUN apk add --no-cache --virtual .build-deps gcc && \
     pip install --no-cache-dir -r requirements.txt && \
-    apk del --no-network .build-deps
+    apk del --no-network .build-deps && \
+    rm -rf /tmp/*
