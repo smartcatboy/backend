@@ -97,11 +97,16 @@ class V2rayConfig(BaseModel):
 
 class BrookConfig(BaseModel):
     command: str
+    remote_ip: t.Optional[str]
     remote_address: t.Optional[str]
     remote_port: t.Optional[int]
+    server_address: t.Optional[str]
+    server_port: t.Optional[int]
     password: t.Optional[str]
 
+    _remote_ip = validator("remote_ip", pre=True, allow_reuse=True)(check_ip)
     _remote_port = validator("remote_port", allow_reuse=True)(check_port)
+    _server_port = validator("server_port", allow_reuse=True)(check_port)
 
     @validator("command", pre=True)
     def check_command(cls, v):
