@@ -209,7 +209,7 @@ class HaproxyConfig(BaseModel):
 
     @validator("send_proxy", pre=True)
     def check_send_proxy(cls, v):
-        if v not in ("send-proxy", "send-proxy-v2"):
+        if v and v not in ("send-proxy", "send-proxy-v2"):
             raise ValueError(f"Invalid send proxy: {v}")
         return v
 
