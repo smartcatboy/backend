@@ -24,6 +24,12 @@ def check_port(port: int) -> int:
     return port
 
 
+def check_config(config: t.Dict, values: t.Dict) -> t.Dict:
+    method = values.get("method")
+    config = eval(method.name.capitalize() + "Config(**config)")
+    return config
+
+
 class IptablesConfig(BaseModel):
     type: TypeEnum
     remote_ip: t.Optional[str]
@@ -237,39 +243,9 @@ class PortForwardRuleArtifacts(BaseModel):
     stdout: t.Optional[str]
 
 
-def check_config(config: t.Dict, values: t.Dict) -> t.Union[
-        ShadowsocksConfig,
-        WstunnelConfig,
-        EhcoConfig,
-        BrookConfig,
-        RealmConfig,
-        IptablesConfig,
-        SocatConfig,
-        IperfConfig,
-        GostConfig,
-        V2rayConfig,
-        HaproxyConfig,
-    ] :
-    method = values.get("method")
-    config = eval(method.name.capitalize() + "Config(**config)")
-    return config
-
-
 class PortForwardRuleCreate(PortForwardRuleBase):
     method: MethodEnum
-    config: t.Union[
-        ShadowsocksConfig,
-        WstunnelConfig,
-        EhcoConfig,
-        BrookConfig,
-        RealmConfig,
-        IptablesConfig,
-        SocatConfig,
-        IperfConfig,
-        GostConfig,
-        V2rayConfig,
-        HaproxyConfig,
-    ]
+    config: t.Dict
 
     _config = validator("config", pre=True, allow_reuse=True)(check_config)
 
@@ -279,19 +255,7 @@ class PortForwardRuleCreate(PortForwardRuleBase):
 
 class PortForwardRuleEdit(BaseModel):
     method: MethodEnum
-    config: t.Union[
-        ShadowsocksConfig,
-        WstunnelConfig,
-        EhcoConfig,
-        BrookConfig,
-        RealmConfig,
-        IptablesConfig,
-        SocatConfig,
-        IperfConfig,
-        GostConfig,
-        V2rayConfig,
-        HaproxyConfig,
-    ]
+    config: t.Dict
 
     _config = validator("config", pre=True, allow_reuse=True)(check_config)
 
