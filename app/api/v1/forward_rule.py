@@ -216,7 +216,8 @@ def verify_gost_config(
         return rule
 
     num = port.external_num if port.external_num else port.num
-    for node in rule.config.ServeNodes:
+    nodes = rule.config.get("ServeNodes", [])
+    for node in nodes:
         parsed = urlparse(node)
         if parsed.scheme.startswith("relay+"):
             if (len(parsed.path) > 0
