@@ -44,10 +44,13 @@ def trigger_forward_rule(rule: PortForwardRule):
         MethodEnum.V2RAY,
         MethodEnum.WSTUNNEL,
         MethodEnum.REALM,
+        MethodEnum.HAPROXY,
     ):
         rule_runner(rule_id=rule.id)
     elif rule.method == MethodEnum.IPTABLES:
         send_iptables(rule)
+    else:
+        print(f"Not supported rule method: {rule.method}")
 
 
 def trigger_tc(port: Port):
@@ -103,5 +106,5 @@ def trigger_server_clean(server: Server):
 def trigger_port_clean(server: Server, port: Port, update_traffic: bool = True):
     print("Sending clean.clean_port_runner task")
     clean_port_runner(
-        server_id=server.id, port_num=port.num, update_traffic=update_traffic
+        server_id=server.id, port=port, update_traffic=update_traffic
     )
