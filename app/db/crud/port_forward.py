@@ -165,6 +165,15 @@ def get_all_iptables_rules(db: Session) -> t.List[PortForwardRule]:
     )
 
 
+def get_all_expire_rules(db: Session) -> t.List[PortForwardRule]:
+    return (
+        db.query(PortForwardRule)
+        .options(joinedload(PortForwardRule.port).joinedload(Port.server))
+        .filter(PortForwardRule.method == MethodEnum.IPERF)
+        .all()
+    )
+
+
 def get_all_ddns_rules(db: Session) -> t.List[PortForwardRule]:
     return (
         db.query(PortForwardRule)
