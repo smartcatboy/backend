@@ -151,3 +151,15 @@ def get_user_ports(db: Session, user_id: int) -> t.List[PortUser]:
         .options(joinedload(PortUser.port))
         .all()
     )
+
+
+def get_user_ports_with_usage(db: Session, user_id: int) -> t.List[PortUser]:
+    return (
+        db.query(PortUser)
+        .filter(PortUser.user_id == user_id)
+        .options(
+            joinedload(PortUser.port)
+            .joinedload(Port.usage)
+        )
+        .all()
+    )
