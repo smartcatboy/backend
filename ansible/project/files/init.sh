@@ -80,7 +80,7 @@ check_envs () {
     ENV_PATH=$(env | grep PATH | grep "\/usr\/local\/bin")
     [[ -n $ENV_PATH ]] && return 0
     echo "Adding local bin ..."
-    echo "export PATH=/usr/local/bin:$PATH" >> /etc/environment
+    echo "export PATH=/usr/local/bin:\$PATH" >> /etc/environment
 }
 
 delete_service () {
