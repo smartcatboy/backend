@@ -43,7 +43,7 @@ def clean_port_runner(server_id: int, port: Port, update_traffic: bool = True):
     )
 
 
-@huey.periodic_task(crontab(minute="*/1"), priority=4)
+@huey.periodic_task(crontab(minute="*"), priority=4)
 def clean_expired_port_runner():
     with db_session() as db:
         db_expire_rules = get_all_expire_rules(db)
